@@ -4,28 +4,30 @@ from torch.nn import init
 
 import math
 import numpy as np
+from collections import namedtuple
+from .networks.resample2d_package.resample2d import Resample2d
+from .networks.channelnorm_package.channelnorm import ChannelNorm
 
-from networks.resample2d_package.resample2d import Resample2d
-from networks.channelnorm_package.channelnorm import ChannelNorm
+from .networks import FlowNetC
+from .networks import FlowNetS
+from .networks import FlowNetSD
+from .networks import FlowNetFusion
 
-from networks import FlowNetC
-from networks import FlowNetS
-from networks import FlowNetSD
-from networks import FlowNetFusion
-
-from networks.submodules import *
+from .networks.submodules import *
 'Parameter count = 162,518,834'
 
 class FlowNet2(nn.Module):
 
-    def __init__(self, args, batchNorm=False, div_flow = 20.):
+    def __init__(self, args=None, batchNorm=False, div_flow = 20.):
         super(FlowNet2,self).__init__()
         self.batchNorm = batchNorm
         self.div_flow = div_flow
+
         self.rgb_max = args.rgb_max
         self.args = args
 
         self.channelnorm = ChannelNorm()
+
 
         # First Block (FlowNetC)
         self.flownetc = FlowNetC.FlowNetC(args, batchNorm=self.batchNorm)
